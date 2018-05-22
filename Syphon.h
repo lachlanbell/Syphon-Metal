@@ -31,6 +31,7 @@
 #import "SyphonServer.h"
 #import "SyphonClient.h"
 #import "SyphonImage.h"
+#import "SyphonMetalServer.h"
 
 /*! \mainpage Syphon Framework
  @section intro_sec Developing with Syphon
