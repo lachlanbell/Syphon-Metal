@@ -144,6 +144,19 @@
 
 #pragma mark - Public API
 
+- (void)drawFrame:(void(^)(id<MTLTexture> texture,id<MTLCommandBuffer> commandBuffer))block size:(NSSize)size commandBuffer:(id<MTLCommandBuffer>)commandBuffer
+{
+    id<MTLTexture> texture = [self prepareToDrawFrameOfSize:size];
+    if( texture != nil )
+    {
+        block(texture, commandBuffer);
+        [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> _Nonnull commandBuffer) {
+#warning MTO : fix, texture is flipped on SyphonClient
+            [self publishNewFrame];
+        }];
+    }
+}
+
 - (id<MTLTexture>)prepareToDrawFrameOfSize:(NSSize)size
 {
     [self setupSurfaceAndTextureForSize:size];
@@ -191,6 +204,17 @@
     }];
     
     [commandBuffer commit];
+}
+
+- (void)publishFrameTexture:(id<MTLTexture>)textureToPublish flipped:(BOOL)isFlipped
+{
+    NSRect region = NSMakeRect(0, 0, textureToPublish.width, textureToPublish.height);
+    [self publishFrameTexture:textureToPublish imageRegion:region flipped:isFlipped];
+}
+
+- (void)publishFrameTexture:(id<MTLTexture>)textureToPublish
+{
+    [self publishFrameTexture:textureToPublish flipped:NO];
 }
 
 - (NSString*)name

@@ -16,11 +16,12 @@
 - (id)initWithName:(NSString*)serverName metalDevice:(id<MTLDevice>)metalDevice pixelFormat:(MTLPixelFormat)pixelFormat;
 
 // API Method 1
-- (id<MTLTexture>)prepareToDrawFrameOfSize:(NSSize)size;
-- (void)publishNewFrame;
+- (void)drawFrame:(void(^)(id<MTLTexture> texture,id<MTLCommandBuffer> commandBuffer))block size:(NSSize)size commandBuffer:(id<MTLCommandBuffer>)commandBuffer;
 
 // API Method 2
 - (void)publishFrameTexture:(id<MTLTexture>)texture imageRegion:(NSRect)region flipped:(BOOL)isFlipped;
+- (void)publishFrameTexture:(id<MTLTexture>)texture flipped:(BOOL)isFlipped;
+- (void)publishFrameTexture:(id<MTLTexture>)texture;
 
 
 - (id<MTLTexture>)newFrameTexture;
