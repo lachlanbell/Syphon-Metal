@@ -5,6 +5,17 @@
 #import <Metal/MTLCommandQueue.h>
 #import "SyphonServerRendererMetal.h"
 
+
+@interface SYPHON_METAL_SERVER_UNIQUE_CLASS_NAME (Private)
++ (void)retireRemainingServers;
+@end
+
+__attribute__((destructor))
+static void finalizer()
+{
+    [SYPHON_METAL_SERVER_UNIQUE_CLASS_NAME retireRemainingServers];
+}
+
 @interface SYPHON_METAL_SERVER_UNIQUE_CLASS_NAME()
 {
     NSString *_name;
@@ -18,6 +29,7 @@
     BOOL surfaceHasChanged;
     int32_t threadLock;
     SyphonServerRendererMetal *_renderer;
+    BOOL _broadcasts;
 }
 
 @end
@@ -32,7 +44,7 @@
 
 #pragma mark - setups and destroys
 
-- (id)initWithName:(NSString *)serverName metalDevice:(id<MTLDevice>)metalDevice pixelFormat:(MTLPixelFormat)pixelFormat
+- (id)initWithName:(NSString *)serverName metalDevice:(id<MTLDevice>)metalDevice pixelFormat:(MTLPixelFormat)pixelFormat options:(NSDictionary *)options
 {
     self = [super init];
     if( self )
@@ -63,7 +75,23 @@
             return nil;
         }
         
-        [self startBroadcasts];
+        NSNumber *isPrivate = [options objectForKey:SyphonServerOptionIsPrivate];
+        if ([isPrivate respondsToSelector:@selector(boolValue)]
+            && [isPrivate boolValue] == YES)
+        {
+            _broadcasts = NO;
+        }
+        else
+        {
+            _broadcasts = YES;
+        }
+        
+        if (_broadcasts)
+        {
+            [[self class] addServerToRetireList:_uuid];
+            [self startBroadcasts];
+        }
+
         
         _renderer = [[SyphonServerRendererMetal alloc] initWithDevice:_device pixelFormat:_pixelFormat];
     }
@@ -233,6 +261,10 @@
     _name = newName;
     OSSpinLockUnlock(&threadLock);
     [_connectionManager setName:newName];
+    if (_broadcasts)
+    {
+        [self broadcastServerUpdate];
+    }
 }
 
 - (BOOL)hasClients
@@ -296,27 +328,6 @@
     }
 }
 
-#pragma mark - Notification handling
-
-- (void)startBroadcasts
-{
-    [NSDistributedNotificationCenter.defaultCenter addObserver:self
-                                                      selector:@selector(handleDiscoveryRequest:)
-                                                          name:SyphonServerAnnounceRequest
-                                                        object:nil];
-    [self postNotification:SyphonServerAnnounce];
-}
-
-- (void)stopBroadcasts
-{
-    [NSDistributedNotificationCenter.defaultCenter removeObserver:self];
-    [self postNotification:SyphonServerRetire];
-}
-
-- (void)handleDiscoveryRequest:(NSNotification *)aNotification
-{
-    [self postNotification:SyphonServerAnnounce];
-}
 
 - (void)postNotification:(NSString *)notificationName
 {
@@ -325,6 +336,111 @@
                                                                  object:description[SyphonServerDescriptionUUIDKey]
                                                                userInfo:description
                                                      deliverImmediately:YES];
+}
+
+#pragma mark Notification Handling for Server Presence
+/*
+ Broadcast and discovery is done via NSDistributedNotificationCenter. Servers notify announce, change (currently only affects name) and retirement.
+ Discovery is done by a discovery-request notification, to which servers respond with an announce.
+ 
+ If this gets unweildy we could move it into a SyphonBroadcaster class
+ 
+ */
+
+/*
+ We track all instances and send a retirement broadcast for any which haven't been stopped when the code is unloaded.
+ */
+
+static OSSpinLock mRetireListLock = OS_SPINLOCK_INIT;
+static NSMutableSet *mRetireList = nil;
+
++ (void)addServerToRetireList:(NSString *)serverUUID
+{
+    OSSpinLockLock(&mRetireListLock);
+    if (mRetireList == nil)
+    {
+        mRetireList = [[NSMutableSet alloc] initWithCapacity:1U];
+    }
+    [mRetireList addObject:serverUUID];
+    OSSpinLockUnlock(&mRetireListLock);
+}
+
++ (void)removeServerFromRetireList:(NSString *)serverUUID
+{
+    OSSpinLockLock(&mRetireListLock);
+    [mRetireList removeObject:serverUUID];
+    if ([mRetireList count] == 0)
+    {
+        [mRetireList release];
+        mRetireList = nil;
+    }
+    OSSpinLockUnlock(&mRetireListLock);
+}
+
++ (void)retireRemainingServers
+{
+    // take the set out of the global so we don't hold the spin-lock while we send the notifications
+    // even though there should never be contention for this
+    NSMutableSet *mySet = nil;
+    OSSpinLockLock(&mRetireListLock);
+    mySet = mRetireList;
+    mRetireList = nil;
+    OSSpinLockUnlock(&mRetireListLock);
+    for (NSString *uuid in mySet) {
+        SYPHONLOG(@"Retiring a server at code unload time because it was not properly stopped");
+        NSDictionary *fakeServerDescription = [NSDictionary dictionaryWithObject:uuid forKey:SyphonServerDescriptionUUIDKey];
+        [[NSDistributedNotificationCenter defaultCenter] postNotificationName:SyphonServerRetire
+                                                                       object:SyphonServerDescriptionUUIDKey
+                                                                     userInfo:fakeServerDescription
+                                                           deliverImmediately:YES];
+    }
+    [mySet release];
+}
+
+- (void)startBroadcasts
+{
+    // Register for any Announcement Requests.
+    [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDiscoveryRequest:) name:SyphonServerAnnounceRequest object:nil];
+    
+    [self broadcastServerAnnounce];
+}
+
+- (void) handleDiscoveryRequest:(NSNotification*) aNotification
+{
+    SYPHONLOG(@"Got Discovery Request");
+    
+    [self broadcastServerAnnounce];
+}
+
+- (void)broadcastServerAnnounce
+{
+    if (_broadcasts)
+    {
+        NSDictionary *description = self.serverDescription;
+        [[NSDistributedNotificationCenter defaultCenter] postNotificationName:SyphonServerAnnounce
+                                                                       object:[description objectForKey:SyphonServerDescriptionUUIDKey]
+                                                                     userInfo:description
+                                                           deliverImmediately:YES];
+    }
+}
+
+- (void)broadcastServerUpdate
+{
+    NSDictionary *description = self.serverDescription;
+    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:SyphonServerUpdate
+                                                                   object:[description objectForKey:SyphonServerDescriptionUUIDKey]
+                                                                 userInfo:description
+                                                       deliverImmediately:YES];
+}
+
+- (void)stopBroadcasts
+{
+    [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
+    NSDictionary *description = self.serverDescription;
+    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:SyphonServerRetire
+                                                                   object:[description objectForKey:SyphonServerDescriptionUUIDKey]
+                                                                 userInfo:description
+                                                       deliverImmediately:YES];
 }
 
 @end

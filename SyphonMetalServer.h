@@ -13,7 +13,7 @@
 @property (retain) NSString* name;
 @property (readonly) NSDictionary *serverDescription;
 
-- (id)initWithName:(NSString*)serverName metalDevice:(id<MTLDevice>)metalDevice pixelFormat:(MTLPixelFormat)pixelFormat;
+- (id)initWithName:(NSString*)serverName metalDevice:(id<MTLDevice>)metalDevice pixelFormat:(MTLPixelFormat)pixelFormat options:(NSDictionary *)options;
 
 // API Method 1
 - (void)drawFrame:(void(^)(id<MTLTexture> texture,id<MTLCommandBuffer> commandBuffer))block size:(NSSize)size commandBuffer:(id<MTLCommandBuffer>)commandBuffer;
