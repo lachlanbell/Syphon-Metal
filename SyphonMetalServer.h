@@ -28,3 +28,7 @@
 - (void)stop;
 
 @end
+
+#if defined(SYPHON_USE_CLASS_ALIAS)
+@compatibility_alias SyphonMetalServer SYPHON_METAL_SERVER_UNIQUE_CLASS_NAME;
+#endif
