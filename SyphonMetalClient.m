@@ -37,7 +37,7 @@ static void *SyphonClientServersContext = &SyphonClientServersContext;
 }
 
 
-- (id)initWithServerDescription:(NSDictionary *)description device:(id<MTLDevice>)theDevice pixelFormat:(MTLPixelFormat)theColorPixelFormat options:(NSDictionary *)options
+- (id)initWithServerDescription:(NSDictionary *)description device:(id<MTLDevice>)theDevice colorPixelFormat:(MTLPixelFormat)theColorPixelFormat options:(NSDictionary *)options
                 newFrameHandler:(void (^)(SYPHON_METAL_CLIENT_UNIQUE_CLASS_NAME *client))handler
 {
     self = [super init];
@@ -50,19 +50,6 @@ static void *SyphonClientServersContext = &SyphonClientServersContext;
         _connectionManager = [[SyphonClientConnectionManager alloc] initWithServerDescription:description];
         _handler = [handler copy]; // copy don't retain
         _lock = OS_SPINLOCK_INIT;
-//#ifdef SYPHON_CORE_SHARE
-//        _shareContext = CGLRetainContext(context);
-//        if (SyphonOpenGLContextIsLegacy(context))
-//        {
-//            _context = CGLRetainContext(context);
-//        }
-//        else
-//        {
-//            _context = SyphonOpenGLCreateSharedContext(context);
-//        }
-//#else
-//        _context = CGLRetainContext(context);
-//#endif
         _serverDescription = [description retain];
         
         [[SyphonServerDirectory sharedDirectory] addObserver:self
@@ -107,11 +94,6 @@ static void *SyphonClientServersContext = &SyphonClientServersContext;
     }
     _frame = nil;
     _frameValid = NO;
-//    if (_context)
-//    {
-//        CGLReleaseContext(_context);
-//        _context = NULL;
-//    }
     OSSpinLockUnlock(&_lock);
 }
 

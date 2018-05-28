@@ -27,13 +27,14 @@
 /*!
  Returns a new client instance for the described server. You should check the isValid property after initialization to ensure a connection was made to the server.
  @param description Typically acquired from the shared SyphonServerDirectory, or one of Syphon's notifications.
- @param context The CGLContextObj context to create textures for.
+ @param device The Metal Device used in your app
+ #param pixelFormat the color pixel format of your view
  @param options Currently ignored. May be nil.
  @param handler A block which is invoked when a new frame becomes available. handler may be nil. This block may be invoked on a thread other than that on which the client was created.
  @returns A newly initialized SyphonClient object, or nil if a client could not be created.
  */
 
-- (id)initWithServerDescription:(NSDictionary *)description device:(id<MTLDevice>)device pixelFormat:(MTLPixelFormat)colorPixelFormat options:(NSDictionary *)options
+- (id)initWithServerDescription:(NSDictionary *)description device:(id<MTLDevice>)device colorPixelFormat:(MTLPixelFormat)colorPixelFormat options:(NSDictionary *)options
                 newFrameHandler:(void (^)(SYPHON_METAL_CLIENT_UNIQUE_CLASS_NAME *client))handler;
 - (id<MTLTexture>)newFrameImage;
 - (void)stop;
