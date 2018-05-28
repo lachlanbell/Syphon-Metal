@@ -34,6 +34,8 @@
 #import "SyphonMessaging.h"
 #import "SyphonImage.h"
 
+#import <Metal/MTLPixelFormat.h>
+#import <Metal/MTLDevice.h>
 /* This object handles messaging to and from the server.
 
  SyphonClients should
@@ -81,6 +83,7 @@
 - (void)addInfoClient:(id <SyphonInfoReceiving>)client isFrameClient:(BOOL)frameClient;     // Must be
 - (void)removeInfoClient:(id <SyphonInfoReceiving>)client isFrameClient:(BOOL)frameClient;  // paired
 - (SyphonImage *)newFrameForContext:(CGLContextObj)context;
+- (id<MTLTexture>)newMetalTextureForDevice:(id<MTLDevice>)device colorPixelFormat:(MTLPixelFormat)colorPixelFormat;
 @property (readonly) NSUInteger frameID;
 @end
 
