@@ -210,22 +210,24 @@ static void finalizer()
 {
     [self setupSurfaceAndTextureForSize:region.size];
     id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
-    [_renderer drawTexture:textureToPublish inTexture:_surfaceTexture withCommandBuffer:commandBuffer flipped:isFlipped];
+    
+// WIP Alternative to make flip and regions possible at the same time inside Syphon, but it comes with a higher GPU cost
+//    [_renderer drawTexture:textureToPublish inTexture:_surfaceTexture withCommandBuffer:commandBuffer flipped:isFlipped];
 
-// Possible alternative when texture should not be flipped. Probably faster. But user needs to change "framebufferOnly" parameter of its view to NO otherwise it'll crash
-//        id<MTLBlitCommandEncoder> blitCommandEncoder = [commandBuffer blitCommandEncoder];
-//        blitCommandEncoder.label = @"Syphon blitCommandEncoder";
-//        [blitCommandEncoder copyFromTexture:textureToPublish
-//                                sourceSlice:0
-//                                sourceLevel:0
-//                               sourceOrigin:MTLOriginMake(region.origin.x, region.origin.y, 0)
-//                                 sourceSize:MTLSizeMake(region.size.width, region.size.height, 1)
-//                                  toTexture:_surfaceTexture
-//                           destinationSlice:0
-//                           destinationLevel:0
-//                          destinationOrigin:MTLOriginMake(0, 0, 0)];
-//
-//        [blitCommandEncoder endEncoding];
+// Best solution if no flip is needed
+// However user should make sure the "framebufferOnly" parameter of its texture is set to NO otherwise it'll crash
+        id<MTLBlitCommandEncoder> blitCommandEncoder = [commandBuffer blitCommandEncoder];
+        [blitCommandEncoder copyFromTexture:textureToPublish
+                                sourceSlice:0
+                                sourceLevel:0
+                               sourceOrigin:MTLOriginMake(region.origin.x, region.origin.y, 0)
+                                 sourceSize:MTLSizeMake(region.size.width, region.size.height, 1)
+                                  toTexture:_surfaceTexture
+                           destinationSlice:0
+                           destinationLevel:0
+                          destinationOrigin:MTLOriginMake(0, 0, 0)];
+
+        [blitCommandEncoder endEncoding];
     
     [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> _Nonnull commandBuffer) {
         [self publishNewFrame];
