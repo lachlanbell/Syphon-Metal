@@ -36,6 +36,8 @@ SYPHON_UNIQUE_CLASS_SYMBOL(SyphonServerDirectory)
 SYPHON_UNIQUE_CLASS_SYMBOL(SyphonImage)
 SYPHON_UNIQUE_CLASS_SYMBOL(SyphonMetalServer)
 SYPHON_UNIQUE_CLASS_SYMBOL(SyphonMetalClient)
+SYPHON_UNIQUE_CLASS_SYMBOL(SyphonServerConnectionManager)
+SYPHON_UNIQUE_CLASS_SYMBOL(SyphonConstants)
 
 _SyphonServerAnnounceNotification
 _SyphonServerDescriptionAppNameKey
