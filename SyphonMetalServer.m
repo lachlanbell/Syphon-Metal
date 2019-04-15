@@ -206,16 +206,18 @@ static void finalizer()
     return [_surfaceTexture retain];
 }
 
-- (void)publishFrameTexture:(id<MTLTexture>)textureToPublish imageRegion:(NSRect)region flipped:(BOOL)isFlipped
+- (void)publishFrameTexture:(id<MTLTexture>)textureToPublish imageRegion:(NSRect)region
 {
     [self setupSurfaceAndTextureForSize:region.size];
     id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
     
-// WIP Alternative to make flip and regions possible at the same time inside Syphon, but it comes with a higher GPU cost
-//    [_renderer drawTexture:textureToPublish inTexture:_surfaceTexture withCommandBuffer:commandBuffer flipped:isFlipped];
+        // User should make sure the "framebufferOnly" parameter of its texture is set to NO otherwise it'll crash
+        if( textureToPublish.framebufferOnly )
+        {
+            SYPHONLOG(@"Syphon Metal Server: Abort sending frame. You need to set the value 'frameBufferOnly' to 'NO' in your MTLTexture.")
+            return;
+        }
 
-// Best solution if no flip is needed
-// However user should make sure the "framebufferOnly" parameter of its texture is set to NO otherwise it'll crash
         id<MTLBlitCommandEncoder> blitCommandEncoder = [commandBuffer blitCommandEncoder];
         [blitCommandEncoder copyFromTexture:textureToPublish
                                 sourceSlice:0
@@ -236,16 +238,12 @@ static void finalizer()
     [commandBuffer commit];
 }
 
-- (void)publishFrameTexture:(id<MTLTexture>)textureToPublish flipped:(BOOL)isFlipped
-{
-    NSRect region = NSMakeRect(0, 0, textureToPublish.width, textureToPublish.height);
-    [self publishFrameTexture:textureToPublish imageRegion:region flipped:isFlipped];
-}
-
 - (void)publishFrameTexture:(id<MTLTexture>)textureToPublish
 {
-    [self publishFrameTexture:textureToPublish flipped:NO];
+    NSRect region = NSMakeRect(0, 0, textureToPublish.width, textureToPublish.height);
+    [self publishFrameTexture:textureToPublish imageRegion:region];
 }
+
 
 - (NSString*)name
 {
