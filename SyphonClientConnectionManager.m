@@ -33,6 +33,7 @@
 #import "SyphonCGL.h"
 #import "SyphonIOSurfaceImageCore.h"
 #import "SyphonIOSurfaceImageLegacy.h"
+#import "SyphonMessaging.h"
 
 #pragma mark Shared Instances
 
@@ -54,7 +55,7 @@ static void SyphonClientPrivateInsertInstance(id instance, NSString *uuid)
 	OSSpinLockLock(&_lookupTableLock);
 	if (uuid)
 	{
-		if (!_lookupTable) _lookupTable = [[NSMapTable alloc] initWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableZeroingWeakMemory capacity:1];
+		if (!_lookupTable) _lookupTable = [[NSMapTable alloc] initWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableWeakMemory capacity:1];
 		[_lookupTable setObject:instance forKey:uuid];
 	}
 	OSSpinLockUnlock(&_lookupTableLock);
@@ -80,6 +81,22 @@ static void SyphonClientPrivateRemoveInstance(id instance, NSString *uuid)
 - (void)invalidateFramesHavingLock;
 @end
 @implementation SyphonClientConnectionManager
+{
+@private
+    NSString *_myUUID;
+    IOSurfaceID _surfaceID;
+    IOSurfaceRef _surface;
+    uint32_t _lastSeed;
+    NSUInteger _frameID;
+    NSString *_serverUUID;
+    BOOL _serverActive;
+    SyphonMessageReceiver *_connection;
+    int32_t _handlerCount;
+    NSHashTable *_infoClients;
+    NSHashTable *_frameClients;
+    dispatch_queue_t _frameQueue;
+    OSSpinLock _lock;
+}
 
 - (id)initWithServerDescription:(NSDictionary *)description
 {
@@ -177,7 +194,7 @@ static void SyphonClientPrivateRemoveInstance(id instance, NSString *uuid)
 	OSSpinLockLock(&_lock);
 	if (_infoClients == nil)
     {
-        _infoClients = [[NSHashTable hashTableWithWeakObjects] retain];
+        _infoClients = [[NSHashTable weakObjectsHashTable] retain];
     }
     [_infoClients addObject:client];
 	BOOL shouldSendAdd = NO;
@@ -213,7 +230,7 @@ static void SyphonClientPrivateRemoveInstance(id instance, NSString *uuid)
     if (isFrameClient && _frameQueue == nil)
     {
         _frameQueue = dispatch_queue_create([_myUUID cStringUsingEncoding:NSUTF8StringEncoding], 0);
-        _frameClients = [[NSHashTable hashTableWithWeakObjects] retain];
+        _frameClients = [[NSHashTable weakObjectsHashTable] retain];
     }
 	OSSpinLockUnlock(&_lock);
     if (isFrameClient)
