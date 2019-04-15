@@ -4,7 +4,7 @@
 #import <Metal/MTLTexture.h>
 #import <Metal/MTLCommandQueue.h>
 #import "SyphonServerRendererMetal.h"
-
+#import "SyphonPrivate.h"
 
 @interface SYPHON_METAL_SERVER_UNIQUE_CLASS_NAME (Private)
 + (void)retireRemainingServers;
