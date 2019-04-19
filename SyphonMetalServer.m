@@ -157,7 +157,6 @@ static void finalizer()
     {
         [_connectionManager removeObserver:self forKeyPath:@"hasClients"];
         [_connectionManager stop];
-        [_connectionManager release];
     }
     [self destroyIOSurfaceAndTexture];
 }
