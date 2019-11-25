@@ -27,13 +27,16 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import <OpenGL/OpenGL.h>
+#import <Syphon/SyphonClientBase.h>
 
 #define SYPHON_CLIENT_UNIQUE_CLASS_NAME SYPHON_UNIQUE_CLASS_NAME(SyphonClient)
 #define SYPHON_IMAGE_UNIQUE_CLASS_NAME SYPHON_UNIQUE_CLASS_NAME(SyphonImage)
 
 @class SYPHON_IMAGE_UNIQUE_CLASS_NAME;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /*! 
  SyphonClient makes available frames from a remote SyphonServer. A client is created from a NSDictionary which describes the server. Typically this is obtained from the shared SyphonServerDirectory, or one of Syphon's notifications.
@@ -43,20 +46,8 @@
  It is safe to access instances of this class across threads, with the usual limitatiions related to OpenGL. The calls to SyphonClient which may cause work to be done in a GL context are: -newFrameImage, -stop and -release.
  */
 
-@interface SYPHON_CLIENT_UNIQUE_CLASS_NAME : NSObject
-{
-@private
-	id				_connectionManager;
-	NSUInteger		_lastFrameID;
-	void			(^_handler)(id);
-	int32_t			_status;
-	int32_t			_lock;
-    CGLContextObj   _context;
-    CGLContextObj   _shareContext;
-    SYPHON_IMAGE_UNIQUE_CLASS_NAME *_frame;
-    int32_t         _frameValid;
-    NSDictionary    *_serverDescription;
-}
+@interface SYPHON_CLIENT_UNIQUE_CLASS_NAME : SyphonClientBase
+
 /*! 
  Returns a new client instance for the described server. You should check the isValid property after initialization to ensure a connection was made to the server.
  @param description Typically acquired from the shared SyphonServerDirectory, or one of Syphon's notifications.
@@ -66,7 +57,7 @@
  @returns A newly initialized SyphonClient object, or nil if a client could not be created.
 */
 
-- (id)initWithServerDescription:(NSDictionary *)description context:(CGLContextObj)context options:(NSDictionary *)options newFrameHandler:(void (^)(SYPHON_CLIENT_UNIQUE_CLASS_NAME *client))handler;
+- (id)initWithServerDescription:(NSDictionary *)description context:(CGLContextObj)context options:(nullable NSDictionary *)options newFrameHandler:(nullable void (^)(SYPHON_CLIENT_UNIQUE_CLASS_NAME *client))handler;
 
 /*!
  Returns the CGLContextObj associated with the client.
@@ -100,7 +91,7 @@
 
  @returns A SyphonImage representing the live output from the server. YOU ARE RESPONSIBLE FOR RELEASING THIS OBJECT when you are finished with it.
  */
-- (SYPHON_IMAGE_UNIQUE_CLASS_NAME *)newFrameImage;
+- (nullable SYPHON_IMAGE_UNIQUE_CLASS_NAME *)newFrameImage;
 
 /*!
  Stops the client from receiving any further frames from the server. Use of this method is optional and releasing all references to the client has the same effect.
@@ -116,3 +107,4 @@
 @compatibility_alias SyphonClient SYPHON_CLIENT_UNIQUE_CLASS_NAME;
 #endif
 
+NS_ASSUME_NONNULL_END

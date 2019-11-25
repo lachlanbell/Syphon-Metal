@@ -28,13 +28,8 @@
  */
 
 
-#import <Cocoa/Cocoa.h>
-#import <IOSurface/IOSurface.h>
-#import <libkern/OSAtomic.h>
-#import "SyphonImage.h"
+#import <Foundation/Foundation.h>
 
-#import <Metal/MTLPixelFormat.h>
-#import <Metal/MTLDevice.h>
 /* This object handles messaging to and from the server.
 
  SyphonClients should
@@ -65,8 +60,7 @@
 @property (readonly) BOOL isValid;
 - (void)addInfoClient:(id <SyphonInfoReceiving>)client isFrameClient:(BOOL)frameClient;     // Must be
 - (void)removeInfoClient:(id <SyphonInfoReceiving>)client isFrameClient:(BOOL)frameClient;  // paired
-- (SyphonImage *)newFrameForContext:(CGLContextObj)context;
-- (id<MTLTexture>)newMetalTextureForDevice:(id<MTLDevice>)device colorPixelFormat:(MTLPixelFormat)colorPixelFormat;
+- (IOSurfaceRef)newSurface;
 @property (readonly) NSUInteger frameID;
 @end
 

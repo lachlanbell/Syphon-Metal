@@ -27,11 +27,8 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "SyphonIOSurfaceImage.h"
+#import "SyphonImage.h"
 
-@interface SyphonIOSurfaceImageCore : SyphonIOSurfaceImage {
-@private
-    GLuint _texture;
-}
-
+@interface SyphonIOSurfaceImageCore : SyphonImage
+- (id)initWithSurface:(IOSurfaceRef)surface forContext:(CGLContextObj)context;
 @end

@@ -30,10 +30,9 @@
 
 #import "SyphonClientConnectionManager.h"
 #import "SyphonPrivate.h"
-#import "SyphonCGL.h"
-#import "SyphonIOSurfaceImageCore.h"
-#import "SyphonIOSurfaceImageLegacy.h"
 #import "SyphonMessaging.h"
+#import <IOSurface/IOSurface.h>
+#import <libkern/OSAtomic.h>
 
 #pragma mark Shared Instances
 
@@ -338,22 +337,14 @@ static void SyphonClientPrivateRemoveInstance(id instance, NSString *uuid)
 	OSSpinLockUnlock(&_lock);
 }
 
-- (SyphonImage *)newFrameForContext:(CGLContextObj)context
+- (IOSurfaceRef)newSurface
 {
-	SyphonImage *result;
+    IOSurfaceRef surface;
 	OSSpinLockLock(&_lock);
-
-    if (SyphonOpenGLContextIsLegacy(context))
-    {
-        result = [[SyphonIOSurfaceImageLegacy alloc] initWithSurface:[self surfaceHavingLock] forContext:context];
-    }
-    else
-    {
-        result = [[SyphonIOSurfaceImageCore alloc] initWithSurface:[self surfaceHavingLock] forContext:context];
-    }
-	
+    surface = [self surfaceHavingLock];
 	OSSpinLockUnlock(&_lock);
-	return result;
+    if (surface) CFRetain(surface);
+    return surface;
 }
 
 - (id<MTLTexture>)newMetalTextureForDevice:(id<MTLDevice>)device colorPixelFormat:(MTLPixelFormat)colorPixelFormat

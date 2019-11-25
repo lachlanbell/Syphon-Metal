@@ -27,15 +27,12 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import "SyphonMessageReceiver.h"
 
 #define SYPHON_MACH_MESSAGE_RECEIVER_UNIQUE_CLASS_NAME SYPHON_UNIQUE_CLASS_NAME(SyphonMachMessageReceiver)
 
-@interface SYPHON_MACH_MESSAGE_RECEIVER_UNIQUE_CLASS_NAME : SyphonMessageReceiver <NSMachPortDelegate> {
-@private
-	NSMachPort *_port;
-}
+@interface SYPHON_MACH_MESSAGE_RECEIVER_UNIQUE_CLASS_NAME : SyphonMessageReceiver <NSMachPortDelegate>
 
 @end
 

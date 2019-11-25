@@ -27,19 +27,14 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import "SyphonMessageSender.h"
 #import "SyphonMessageQueue.h"
 #import "SyphonDispatch.h"
 
 #define SYPHON_CFMESSAGE_SENDER_UNIQUE_CLASS_NAME SYPHON_UNIQUE_CLASS_NAME(SyphonCFMessageSender)
 
-@interface SYPHON_CFMESSAGE_SENDER_UNIQUE_CLASS_NAME : SyphonMessageSender {
-@private
-	CFMessagePortRef _port;
-	SyphonMessageQueue *_queue;
-	SyphonDispatchSourceRef _dispatch;
-}
+@interface SYPHON_CFMESSAGE_SENDER_UNIQUE_CLASS_NAME : SyphonMessageSender
 @end
 
 #if defined(SYPHON_USE_CLASS_ALIAS)

@@ -27,7 +27,9 @@
      SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 /*! @name Server Description Dictionary Key Constants */
 /*! @{ */
@@ -96,13 +98,7 @@ extern NSString * const SyphonServerRetireNotification;
 
 #define SYPHON_SERVER_DIRECTORY_UNIQUE_CLASS_NAME SYPHON_UNIQUE_CLASS_NAME(SyphonServerDirectory)
 
-@interface SYPHON_SERVER_DIRECTORY_UNIQUE_CLASS_NAME : NSObject {
-@private
-	NSMutableArray *_servers;
-	pthread_mutex_t _generalLock;
-	pthread_mutex_t _mutateLock;
-	NSMutableSet *_pings;
-}
+@interface SYPHON_SERVER_DIRECTORY_UNIQUE_CLASS_NAME : NSObject
 
 /*!
  Returns the shared server directory instance. This object is KVO complaint, and can be used to observe changes in server availability, server names and statuses. 
@@ -124,10 +120,12 @@ extern NSString * const SyphonServerRetireNotification;
  @returns An array of NSDictionaries matching the query you specified. 
 */ 
 
-- (NSArray *)serversMatchingName:(NSString *)name appName:(NSString *)appname;
+- (NSArray *)serversMatchingName:(nullable NSString *)name appName:(nullable NSString *)appname;
 
 @end
 
 #if defined(SYPHON_USE_CLASS_ALIAS)
 @compatibility_alias SyphonServerDirectory SYPHON_SERVER_DIRECTORY_UNIQUE_CLASS_NAME;
 #endif
+
+NS_ASSUME_NONNULL_END

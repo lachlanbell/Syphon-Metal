@@ -27,15 +27,12 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import "SyphonMessageSender.h"
 
 #define SYPHON_MACH_MESSAGE_SENDER_UNIQUE_CLASS_NAME SYPHON_UNIQUE_CLASS_NAME(SyphonMachMessageSender)
 
-@interface SYPHON_MACH_MESSAGE_SENDER_UNIQUE_CLASS_NAME : SyphonMessageSender {
-@private
-	NSMachPort *_port;
-}
+@interface SYPHON_MACH_MESSAGE_SENDER_UNIQUE_CLASS_NAME : SyphonMessageSender
 @end
 
 #if defined(SYPHON_USE_CLASS_ALIAS)

@@ -1,5 +1,5 @@
 /*
-    SyphonIOSurfaceImage.m
+    SyphonIOSurfaceImage.h
     Syphon
 
     Copyright 2010-2011 bangnoise (Tom Butterworth) & vade (Anton Marini).
@@ -27,38 +27,21 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import "SyphonIOSurfaceImage.h"
+#import <Foundation/Foundation.h>
 #import <IOSurface/IOSurface.h>
 
-@implementation SyphonIOSurfaceImage
-- (id)initWithSurface:(IOSurfaceRef)surfaceRef forContext:(CGLContextObj)context
-{
-    self = [super init];
-	if (self)
-	{
-		if (context == nil || surfaceRef == nil)
-		{
-			[self release];
-			return nil;
-		}
-		_surface = (IOSurfaceRef)CFRetain(surfaceRef);
-		cgl_ctx = CGLRetainContext(context);
-		_size.width = IOSurfaceGetWidth(surfaceRef);
-		_size.height = IOSurfaceGetHeight(surfaceRef);
-	}
-	return self;
-}
+#define SYPHON_IMAGE_BASE_UNIQUE_CLASS_NAME SYPHON_UNIQUE_CLASS_NAME(SyphonImageBase)
 
-- (void)dealloc
-{
-    if (_surface) CFRelease(_surface);
-    if (cgl_ctx) CGLReleaseContext(cgl_ctx);
-	[super dealloc];
-}
+@interface SYPHON_IMAGE_BASE_UNIQUE_CLASS_NAME : NSObject
 
-- (NSSize)textureSize
-{
-	return _size;
-}
+- (id)initWithSurface:(IOSurfaceRef)surfaceRef NS_DESIGNATED_INITIALIZER;
+@end
 
+#if defined(SYPHON_USE_CLASS_ALIAS)
+@compatibility_alias SyphonImageBase SYPHON_IMAGE_BASE_UNIQUE_CLASS_NAME;
+#endif
+
+@interface SyphonImageBase (SyphonSubclassing)
+// TODO: subclasses probably only need this at init, we might not want to expose it here
+@property (readonly) IOSurfaceRef surface;
 @end
