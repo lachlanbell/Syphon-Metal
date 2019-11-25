@@ -347,19 +347,6 @@ static void SyphonClientPrivateRemoveInstance(id instance, NSString *uuid)
     return surface;
 }
 
-- (id<MTLTexture>)newMetalTextureForDevice:(id<MTLDevice>)device colorPixelFormat:(MTLPixelFormat)colorPixelFormat
-{
-    OSSpinLockLock(&_lock);
-    IOSurfaceRef surface = [self surfaceHavingLock];
-    MTLTextureDescriptor* desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:colorPixelFormat
-                                                                                    width:IOSurfaceGetWidth(surface)
-                                                                                   height:IOSurfaceGetHeight(surface)
-                                                                                mipmapped:NO];
-    id<MTLTexture> texture = [device newTextureWithDescriptor:desc iosurface:surface plane:0];
-    OSSpinLockUnlock(&_lock);
-    return texture;
-}
-
 - (NSUInteger)frameID
 {
 	NSUInteger result;
