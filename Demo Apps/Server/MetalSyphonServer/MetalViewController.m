@@ -15,7 +15,7 @@ const Boolean TEST_ANTIALIASING = false;
         NSLog(@"Metal is not supported on this device");
         exit(0);
     }
-    colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+    colorPixelFormat = MTLPixelFormatBGRA8Unorm;
     commandQueue = [device newCommandQueue];
     basicSceneRenderer = [[BasicSceneRenderer alloc] initWithDevice:device colorPixelFormat:colorPixelFormat];
     basicMsaaSceneRenderer = [[BasicMsaaSceneRenderer alloc] initWithDevice:device colorPixelFormat:colorPixelFormat];
@@ -29,7 +29,7 @@ const Boolean TEST_ANTIALIASING = false;
     self.metalView.framebufferOnly = NO;
     // SYPHON SERVER
     NSDictionary *options = @{@"SyphonServerOptionIsPrivate":@"NO"};
-    syphonServer = [[SyphonMetalServer alloc] initWithName:@"MY SERVER NAME" device:device colorPixelFormat:colorPixelFormat options:options];
+    syphonServer = [[SyphonMetalServer alloc] initWithName:@"MY SERVER NAME" device:device options:options];
     syphonServerMethod = PUBLISH_TEXTURE;
 }
 

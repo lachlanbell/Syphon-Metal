@@ -71,7 +71,7 @@
         fpsCount = 0;
         self.FPS = 0;
         
-        syClient = [[SyphonMetalClient alloc] initWithServerDescription:[descriptions lastObject] device:metalView.device colorPixelFormat:metalView.colorPixelFormat options:nil frameHandler:^(SyphonMetalClient *client) {
+        syClient = [[SyphonMetalClient alloc] initWithServerDescription:[descriptions lastObject] device:metalView.device options:nil frameHandler:^(SyphonMetalClient *client) {
             
             // This gets called whenever the client receives a new frame.
             

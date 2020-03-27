@@ -4,8 +4,10 @@
 
 @interface SyphonMetalClient : SyphonClientBase
 
-- (id)initWithServerDescription:(NSDictionary *)description device:(id<MTLDevice>)device colorPixelFormat:(MTLPixelFormat)colorPixelFormat options:(NSDictionary *)options
-                frameHandler:(void (^)(SyphonMetalClient *client))handler;
+- (id)initWithServerDescription:(NSDictionary *)description
+                         device:(id<MTLDevice>)device
+                        options:(NSDictionary *)options
+                   frameHandler:(void (^)(SyphonMetalClient *client))handler;
 
 - (id<MTLTexture>)newFrameImage;
 - (void)stop;
