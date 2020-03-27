@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5651F00020AF0F420032FE60 /* Syphon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5651EFFF20AF0F420032FE60 /* Syphon.framework */; };
-		5651F00120AF0F620032FE60 /* Syphon.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 5651EFFF20AF0F420032FE60 /* Syphon.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		565A34F120BD351900B873DD /* BasicMsaaSceneRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 565A34F020BD351800B873DD /* BasicMsaaSceneRenderer.m */; };
 		566296A220AEF843007E4C77 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 566296A120AEF843007E4C77 /* AppDelegate.m */; };
 		566296A420AEF843007E4C77 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 566296A320AEF843007E4C77 /* Assets.xcassets */; };
@@ -20,6 +18,8 @@
 		566296BE20AEF9DB007E4C77 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 566296BD20AEF9DB007E4C77 /* Shaders.metal */; };
 		56CCABFA20AF1F83006C098C /* BasicSceneRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 56CCABF920AF1F83006C098C /* BasicSceneRenderer.m */; };
 		56CCABFE20AF24DE006C098C /* TextureRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 56CCABFD20AF24DE006C098C /* TextureRenderer.m */; };
+		842EBD6C242E3C6C009D1D67 /* Syphon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 842EBD6B242E3C6C009D1D67 /* Syphon.framework */; };
+		842EBD6D242E3C7E009D1D67 /* Syphon.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 842EBD6B242E3C6C009D1D67 /* Syphon.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,7 +29,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5651F00120AF0F620032FE60 /* Syphon.framework in Copy Frameworks */,
+				842EBD6D242E3C7E009D1D67 /* Syphon.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -37,7 +37,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5651EFFF20AF0F420032FE60 /* Syphon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Syphon.framework; path = MetalSyphonServer/Syphon.framework; sourceTree = "<group>"; };
 		565A34ED20BD333000B873DD /* BasicMsaaSceneRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BasicMsaaSceneRenderer.h; sourceTree = "<group>"; };
 		565A34F020BD351800B873DD /* BasicMsaaSceneRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BasicMsaaSceneRenderer.m; sourceTree = "<group>"; };
 		5662969D20AEF843007E4C77 /* MetalSyphonServer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalSyphonServer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -58,6 +57,7 @@
 		56CCABF920AF1F83006C098C /* BasicSceneRenderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BasicSceneRenderer.m; sourceTree = "<group>"; };
 		56CCABFC20AF24DE006C098C /* TextureRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextureRenderer.h; sourceTree = "<group>"; };
 		56CCABFD20AF24DE006C098C /* TextureRenderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TextureRenderer.m; sourceTree = "<group>"; };
+		842EBD6B242E3C6C009D1D67 /* Syphon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Syphon.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,7 +66,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				566296B420AEF8B2007E4C77 /* MetalKit.framework in Frameworks */,
-				5651F00020AF0F420032FE60 /* Syphon.framework in Frameworks */,
+				842EBD6C242E3C6C009D1D67 /* Syphon.framework in Frameworks */,
 				566296B520AEF8B2007E4C77 /* Metal.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -77,24 +77,7 @@
 		5662969420AEF843007E4C77 = {
 			isa = PBXGroup;
 			children = (
-				5651EFFF20AF0F420032FE60 /* Syphon.framework */,
-				5662969F20AEF843007E4C77 /* MetalSyphonServer */,
-				5662969E20AEF843007E4C77 /* Products */,
-				566296B120AEF8AA007E4C77 /* Frameworks */,
-			);
-			sourceTree = "<group>";
-		};
-		5662969E20AEF843007E4C77 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				5662969D20AEF843007E4C77 /* MetalSyphonServer.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		5662969F20AEF843007E4C77 /* MetalSyphonServer */ = {
-			isa = PBXGroup;
-			children = (
+				842EBD6B242E3C6C009D1D67 /* Syphon.framework */,
 				566296BC20AEF9B9007E4C77 /* AAPLShaderTypes.h */,
 				566296BD20AEF9DB007E4C77 /* Shaders.metal */,
 				56CCABFB20AF24C8006C098C /* Scenes */,
@@ -107,8 +90,17 @@
 				566296A820AEF843007E4C77 /* Info.plist */,
 				566296A920AEF843007E4C77 /* main.m */,
 				566296AB20AEF843007E4C77 /* MetalSyphonServer.entitlements */,
+				5662969E20AEF843007E4C77 /* Products */,
+				566296B120AEF8AA007E4C77 /* Frameworks */,
 			);
-			path = MetalSyphonServer;
+			sourceTree = "<group>";
+		};
+		5662969E20AEF843007E4C77 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5662969D20AEF843007E4C77 /* MetalSyphonServer.app */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		566296B120AEF8AA007E4C77 /* Frameworks */ = {
@@ -335,14 +327,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = MetalSyphonServer/MetalSyphonServer.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MetalSyphonServer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/MetalSyphonServer",
+					"$(PROJECT_DIR)/**",
 				);
-				INFOPLIST_FILE = MetalSyphonServer/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = anomes.mto.MetalSyphonServer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -353,14 +345,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = MetalSyphonServer/MetalSyphonServer.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MetalSyphonServer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/MetalSyphonServer",
+					"$(PROJECT_DIR)/**",
 				);
-				INFOPLIST_FILE = MetalSyphonServer/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = anomes.mto.MetalSyphonServer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
