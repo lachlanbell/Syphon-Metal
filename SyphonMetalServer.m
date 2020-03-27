@@ -4,51 +4,63 @@
 
 @implementation SYPHON_METAL_SERVER_UNIQUE_CLASS_NAME
 {
-    id <MTLTexture> surfaceTexture;
-    id<MTLDevice> device;
-    MTLPixelFormat colorPixelFormat;
-    id<MTLCommandQueue> commandQueue;
+    id <MTLTexture> _surfaceTexture;
+    id<MTLDevice> _device;
+    id<MTLCommandQueue> _commandQueue;
 }
 
 #pragma mark - Lifecycle
 
-- (id)initWithName:(NSString *)name device:(id<MTLDevice>)theDevice colorPixelFormat:(MTLPixelFormat)theColorPixelFormat options:(NSDictionary *)options
+- (id)initWithName:(NSString *)name device:(id<MTLDevice>)theDevice options:(NSDictionary *)options
 {
     self = [super initWithName:name options:options];
     if( self )
     {
-        device = theDevice;
-        colorPixelFormat = theColorPixelFormat;
-        commandQueue = [device newCommandQueue];
-        surfaceTexture = nil;
+        _device = [theDevice retain];
+        _commandQueue = [_device newCommandQueue];
+        _surfaceTexture = nil;
     }
     return self;
 }
 
 - (void)lazySetupTextureForSize:(NSSize)size
 {
-    BOOL hasSizeChanged = !NSEqualSizes(CGSizeMake(surfaceTexture.width, surfaceTexture.height), size);
-    if( surfaceTexture == nil || hasSizeChanged )
+    BOOL hasSizeChanged = !NSEqualSizes(CGSizeMake(_surfaceTexture.width, _surfaceTexture.height), size);
+    if (hasSizeChanged)
     {
-        MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:colorPixelFormat
+        [_surfaceTexture release];
+        _surfaceTexture = nil;
+    }
+    if(_surfaceTexture == nil)
+    {
+        MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm
                                                                                               width:size.width
                                                                                              height:size.height
                                                                                           mipmapped:NO];
         descriptor.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
         IOSurfaceRef surface = [super copySurfaceForWidth:size.width height:size.height options:nil];
-        surfaceTexture = [device newTextureWithDescriptor:descriptor iosurface:surface plane:0];
+        if (surface)
+        {
+            _surfaceTexture = [_device newTextureWithDescriptor:descriptor iosurface:surface plane:0];
+            CFRelease(surface);
+        }
     }
 }
 
 - (id<MTLTexture>)prepareToDrawFrameOfSize:(NSSize)size
 {
     [self lazySetupTextureForSize:size];
-    return [surfaceTexture retain];
+    return _surfaceTexture;
 }
 
 - (void)stop
 {
-    surfaceTexture = nil;
+    [_surfaceTexture release];
+    _surfaceTexture = nil;
+    [_device release];
+    _device = nil;
+    [_commandQueue release];
+    _commandQueue = nil;
     [super stop];
 }
 
@@ -57,7 +69,7 @@
 
 - (id<MTLTexture>)newFrameImage
 {
-    return [surfaceTexture retain];
+    return [_surfaceTexture retain];
 }
 
 - (void)drawFrame:(void(^)(id<MTLTexture> frame,id<MTLCommandBuffer> commandBuffer))frameHandler size:(NSSize)size commandBuffer:(id<MTLCommandBuffer>)commandBuffer
@@ -75,7 +87,7 @@
 - (void)publishFrameTexture:(id<MTLTexture>)textureToPublish imageRegion:(NSRect)region
 {
     [self lazySetupTextureForSize:region.size];
-    id<MTLCommandBuffer> commandBuffer = [commandQueue commandBuffer];
+    id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
     
     // "framebufferOnly" should be 'NO' otherwise we can't blit
     if( textureToPublish.framebufferOnly )
@@ -90,7 +102,7 @@
                             sourceLevel:0
                            sourceOrigin:MTLOriginMake(region.origin.x, region.origin.y, 0)
                              sourceSize:MTLSizeMake(region.size.width, region.size.height, 1)
-                              toTexture:surfaceTexture
+                              toTexture:_surfaceTexture
                        destinationSlice:0
                        destinationLevel:0
                       destinationOrigin:MTLOriginMake(0, 0, 0)];
