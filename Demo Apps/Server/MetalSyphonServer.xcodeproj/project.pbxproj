@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		565A34F120BD351900B873DD /* BasicMsaaSceneRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 565A34F020BD351800B873DD /* BasicMsaaSceneRenderer.m */; };
 		566296A220AEF843007E4C77 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 566296A120AEF843007E4C77 /* AppDelegate.m */; };
 		566296A420AEF843007E4C77 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 566296A320AEF843007E4C77 /* Assets.xcassets */; };
 		566296A720AEF843007E4C77 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 566296A520AEF843007E4C77 /* MainMenu.xib */; };
@@ -37,8 +36,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		565A34ED20BD333000B873DD /* BasicMsaaSceneRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BasicMsaaSceneRenderer.h; sourceTree = "<group>"; };
-		565A34F020BD351800B873DD /* BasicMsaaSceneRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BasicMsaaSceneRenderer.m; sourceTree = "<group>"; };
 		5662969D20AEF843007E4C77 /* MetalSyphonServer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalSyphonServer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		566296A020AEF843007E4C77 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		566296A120AEF843007E4C77 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -80,7 +77,7 @@
 				842EBD6B242E3C6C009D1D67 /* Syphon.framework */,
 				566296BC20AEF9B9007E4C77 /* AAPLShaderTypes.h */,
 				566296BD20AEF9DB007E4C77 /* Shaders.metal */,
-				56CCABFB20AF24C8006C098C /* Scenes */,
+				56CCABFB20AF24C8006C098C /* Renderers */,
 				566296A520AEF843007E4C77 /* MainMenu.xib */,
 				566296B620AEF8EB007E4C77 /* MetalViewController.h */,
 				566296B720AEF8EB007E4C77 /* MetalViewController.m */,
@@ -112,17 +109,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		56CCABFB20AF24C8006C098C /* Scenes */ = {
+		56CCABFB20AF24C8006C098C /* Renderers */ = {
 			isa = PBXGroup;
 			children = (
 				56CCABF820AF1F83006C098C /* BasicSceneRenderer.h */,
 				56CCABF920AF1F83006C098C /* BasicSceneRenderer.m */,
 				56CCABFC20AF24DE006C098C /* TextureRenderer.h */,
 				56CCABFD20AF24DE006C098C /* TextureRenderer.m */,
-				565A34ED20BD333000B873DD /* BasicMsaaSceneRenderer.h */,
-				565A34F020BD351800B873DD /* BasicMsaaSceneRenderer.m */,
 			);
-			path = Scenes;
+			path = Renderers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -201,7 +196,6 @@
 				566296B820AEF8EB007E4C77 /* MetalViewController.m in Sources */,
 				566296AA20AEF843007E4C77 /* main.m in Sources */,
 				56CCABFA20AF1F83006C098C /* BasicSceneRenderer.m in Sources */,
-				565A34F120BD351900B873DD /* BasicMsaaSceneRenderer.m in Sources */,
 				566296A220AEF843007E4C77 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

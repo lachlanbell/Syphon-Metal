@@ -15,11 +15,9 @@
         NSError *error = NULL;
         id<MTLLibrary> defaultLibrary = [device newDefaultLibrary];
         
-        // Load the vertex/fragment functions from the library
         id <MTLFunction> vertexFunction = [defaultLibrary newFunctionWithName:@"textureToScreenVertexShader"];
         id <MTLFunction> fragmentFunction = [defaultLibrary newFunctionWithName:@"textureToScreenSamplingShader"];
         
-        // Set up a descriptor for creating a pipeline state object
         MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
         pipelineStateDescriptor.vertexFunction = vertexFunction;
         pipelineStateDescriptor.fragmentFunction = fragmentFunction;
@@ -35,25 +33,31 @@
     return self;
 }
 
-- (void) renderFromTexture:(id<MTLTexture>)offScreenTexture inTexture:(id<MTLTexture>)texture onCommandBuffer:(id<MTLCommandBuffer>)commandBuffer andViewPort:(MTLViewport)viewport;
+- (void)renderFromTexture:(id<MTLTexture>)offScreenTexture inTexture:(id<MTLTexture>)texture onCommandBuffer:(id<MTLCommandBuffer>)commandBuffer andViewPort:(MTLViewport)viewport
+{
+    [self renderFromTexture:offScreenTexture inTexture:texture onCommandBuffer:commandBuffer andViewPort:viewport flip:NO];
+}
+- (void) renderFromTexture:(id<MTLTexture>)offScreenTexture inTexture:(id<MTLTexture>)texture onCommandBuffer:(id<MTLCommandBuffer>)commandBuffer andViewPort:(MTLViewport)viewport flip:(BOOL)flip
 {
     _viewportSize.x = viewport.width;
     _viewportSize.y = viewport.height;
     
-    float w = viewport.width/2;
-    float h = viewport.height/2;
+    const float w = viewport.width/2;
+    const float h = viewport.height/2;
+    const float flipValue = flip ? -1 : 1;
     
     const AAPLTextureVertex quadVertices[] =
     {
-        // Pixel positions, Texture coordinates
-        { {  w,   h },  { 1.f, 1.f } },
-        { { -w,   h },  { 0.f, 1.f } },
-        { { -w,  -h },  { 0.f, 0.f } },
+        // Pixel positions (NDC), Texture coordinates
+        { {  w,   flipValue * h },  { 1.f, 1.f } },
+        { { -w,   flipValue * h },  { 0.f, 1.f } },
+        { { -w,  flipValue * -h },  { 0.f, 0.f } },
         
-        { {  w,   h },  { 1.f, 1.f } },
-        { { -w,  -h },  { 0.f, 0.f } },
-        { {  w,  -h },  { 1.f, 0.f } },
+        { {  w,  flipValue * h },  { 1.f, 1.f } },
+        { { -w,  flipValue * -h },  { 0.f, 0.f } },
+        { {  w,  flipValue * -h },  { 1.f, 0.f } },
     };
+    
     NSUInteger numberOfVertices =  sizeof(quadVertices) / sizeof(AAPLTextureVertex);
     
     MTLRenderPassDescriptor *renderPassDescriptor = [MTLRenderPassDescriptor renderPassDescriptor];
@@ -61,7 +65,6 @@
     renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
     renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0.0, 0.0, 0.0, 1.0);
     
-    // Create a render command encoder so we can render into something
     id <MTLRenderCommandEncoder> renderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
     [renderEncoder setViewport:viewport];
     [renderEncoder setRenderPipelineState:pipelineState];
@@ -71,4 +74,5 @@
     [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:numberOfVertices];
     [renderEncoder endEncoding];
 }
+
 @end

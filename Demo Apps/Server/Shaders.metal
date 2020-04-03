@@ -68,12 +68,6 @@ fragment float4 triangleFragmentShader(RasterizerData in [[stage_in]])
     return in.color;
 }
 
-
-///----------------------------------------------------------------
-
-
-
-
 // Vertex Function
 vertex RasterizerData
 textureToScreenVertexShader(uint vertexID [[ vertex_id ]],
