@@ -40,6 +40,7 @@
 #import "SyphonImage.h"
 #import "SyphonMetalServer.h"
 #import "SyphonMetalClient.h"
+#import "SyphonIOSurfaceServer.h"
 
 /*! \mainpage Syphon Framework
  @section intro_sec Developing with Syphon

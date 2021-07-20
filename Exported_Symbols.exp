@@ -41,6 +41,7 @@ SYPHON_UNIQUE_CLASS_SYMBOL(SyphonOpenGLImage)
 SYPHON_UNIQUE_CLASS_SYMBOL(SyphonImage)
 SYPHON_UNIQUE_CLASS_SYMBOL(SyphonMetalServer)
 SYPHON_UNIQUE_CLASS_SYMBOL(SyphonMetalClient)
+SYPHON_UNIQUE_CLASS_SYMBOL(SyphonIOSurfaceServer)
 
 _SyphonServerAnnounceNotification
 _SyphonServerDescriptionAppNameKey

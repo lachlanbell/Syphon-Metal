@@ -283,6 +283,14 @@ static void finalizer()
     }
     [(SyphonServerConnectionManager *)_connectionManager publishNewFrame];
 }
+
+- (void)publishIOSurface:(IOSurfaceRef)ioSurfaceToPublish
+{
+    [(SyphonServerConnectionManager *)_connectionManager setSurfaceID:IOSurfaceGetID(ioSurfaceToPublish)]; // push the new surface ID to clients (only if needed)
+    [(SyphonServerConnectionManager *)_connectionManager publishNewFrame];
+}
+
+
 #pragma mark Notification Handling for Server Presence
 /*
  Broadcast and discovery is done via NSDistributedNotificationCenter. Servers notify announce, change (currently only affects name) and retirement.
