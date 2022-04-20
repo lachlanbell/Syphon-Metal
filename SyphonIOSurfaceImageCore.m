@@ -30,11 +30,25 @@
 #import <OpenGL/gl3.h>
 
 @implementation SyphonIOSurfaceImageCore
+{
+@private
+    CGLContextObj cgl_ctx;
+    GLuint _texture;
+}
+
 - (id)initWithSurface:(IOSurfaceRef)surface forContext:(CGLContextObj)context
 {
-    self = [super initWithSurface:surface forContext:context];
+    self = [super initWithSurface:surface];
     if (self)
     {
+        if (!context)
+        {
+            [self release];
+            return nil;
+        }
+
+        cgl_ctx = CGLRetainContext(context);
+
         CGLContextObj previous = CGLGetCurrentContext();
         if (previous != context)
         {
@@ -49,7 +63,9 @@
 #endif
         glBindTexture(GL_TEXTURE_RECTANGLE, _texture);
 
-        CGLError err = CGLTexImageIOSurface2D(cgl_ctx, GL_TEXTURE_RECTANGLE, GL_RGBA8, _size.width, _size.height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, surface, 0);
+        NSSize size = self.textureSize;
+
+        CGLError err = CGLTexImageIOSurface2D(cgl_ctx, GL_TEXTURE_RECTANGLE, GL_RGBA8, size.width, size.height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, surface, 0);
 #ifdef SYPHON_CORE_RESTORE
         glBindTexture(GL_TEXTURE_RECTANGLE, prev);
 #else
@@ -85,6 +101,7 @@
             CGLSetCurrentContext(previous);
         }
     }
+    if (cgl_ctx) CGLReleaseContext(cgl_ctx);
     [super dealloc];
 }
 

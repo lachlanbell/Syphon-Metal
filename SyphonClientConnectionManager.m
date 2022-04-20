@@ -30,10 +30,9 @@
 
 #import "SyphonClientConnectionManager.h"
 #import "SyphonPrivate.h"
-#import "SyphonCGL.h"
-#import "SyphonIOSurfaceImageCore.h"
-#import "SyphonIOSurfaceImageLegacy.h"
 #import "SyphonMessaging.h"
+#import <IOSurface/IOSurface.h>
+#import <libkern/OSAtomic.h>
 
 #pragma mark Shared Instances
 
@@ -338,35 +337,14 @@ static void SyphonClientPrivateRemoveInstance(id instance, NSString *uuid)
 	OSSpinLockUnlock(&_lock);
 }
 
-- (SyphonImage *)newFrameForContext:(CGLContextObj)context
+- (IOSurfaceRef)newSurface
 {
-	SyphonImage *result;
+    IOSurfaceRef surface;
 	OSSpinLockLock(&_lock);
-
-    if (SyphonOpenGLContextIsLegacy(context))
-    {
-        result = [[SyphonIOSurfaceImageLegacy alloc] initWithSurface:[self surfaceHavingLock] forContext:context];
-    }
-    else
-    {
-        result = [[SyphonIOSurfaceImageCore alloc] initWithSurface:[self surfaceHavingLock] forContext:context];
-    }
-	
+    surface = [self surfaceHavingLock];
 	OSSpinLockUnlock(&_lock);
-	return result;
-}
-
-- (id<MTLTexture>)newMetalTextureForDevice:(id<MTLDevice>)device colorPixelFormat:(MTLPixelFormat)colorPixelFormat
-{
-    OSSpinLockLock(&_lock);
-    IOSurfaceRef surface = [self surfaceHavingLock];
-    MTLTextureDescriptor* desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:colorPixelFormat
-                                                                                    width:IOSurfaceGetWidth(surface)
-                                                                                   height:IOSurfaceGetHeight(surface)
-                                                                                mipmapped:NO];
-    id<MTLTexture> texture = [device newTextureWithDescriptor:desc iosurface:surface plane:0];
-    OSSpinLockUnlock(&_lock);
-    return texture;
+    if (surface) CFRetain(surface);
+    return surface;
 }
 
 - (NSUInteger)frameID

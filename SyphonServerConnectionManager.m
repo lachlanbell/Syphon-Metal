@@ -331,10 +331,13 @@
 - (void)setSurfaceID:(IOSurfaceID)newID
 {
 	dispatch_sync(_queue, ^{
-		_surfaceID = newID;
-		[_infoClients enumerateKeysAndObjectsUsingBlock:^(id key, id client, BOOL *stop) {
-			[(SyphonMessageSender *)client send:[NSNumber numberWithUnsignedInt:newID] ofType:SyphonMessageTypeUpdateSurfaceID];
-		}];
+        if( _surfaceID != newID )
+        {
+            _surfaceID = newID;
+            [_infoClients enumerateKeysAndObjectsUsingBlock:^(id key, id client, BOOL *stop) {
+                [(SyphonMessageSender *)client send:[NSNumber numberWithUnsignedInt:newID] ofType:SyphonMessageTypeUpdateSurfaceID];
+            }];
+        }
 	});
 }
 

@@ -29,6 +29,7 @@
 
 #import "SyphonServerDirectory.h"
 #import "SyphonPrivate.h"
+#import <Cocoa/Cocoa.h>
 #import <pthread.h>
 
 #define kSyphonServerDirectoryAnnounceTimeout 6
@@ -53,6 +54,13 @@ NSString * const SyphonServerRetireNotification = @"SyphonServerRetireNotificati
 @end
 
 @implementation SyphonServerDirectory
+{
+@private
+    NSMutableArray *_servers;
+    pthread_mutex_t _generalLock;
+    pthread_mutex_t _mutateLock;
+    NSMutableSet *_pings;
+}
 
 + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)theKey
 {

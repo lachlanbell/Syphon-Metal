@@ -36,6 +36,22 @@
 #import <OpenGL/gl3ext.h> // For glFlushRendererAPPLE()
 
 @implementation SyphonServerRendererCore
+{
+@private
+    GLuint  _depthBuffer;
+    GLuint  _stencilBuffer;
+    GLuint  _surfaceFBO;
+    GLuint  _msaaFBO;
+    GLuint  _msaaColorBuffer;
+    GLuint  _actualMSAASampleCount;
+    CGLContextObj   _prevContext;
+    SyphonServerShader  *_shader;
+    SyphonServerVertices *_vertices;
+#ifdef SYPHON_CORE_RESTORE
+    GLint _previousReadFBO;
+    GLint _previousDrawFBO;
+#endif
+}
 
 - (id)initWithContext:(CGLContextObj)context MSAASampleCount:(GLuint)msc depthBufferResolution:(GLuint)dbr stencilBufferResolution:(GLuint)sbr
 {
@@ -148,7 +164,7 @@
     [super destroySizedResources];
 }
 
-- (SyphonImage *)newImageForSurface:(IOSurfaceRef)surface
+- (SyphonOpenGLImage *)newImageForSurface:(IOSurfaceRef)surface
 {
     return [[SyphonIOSurfaceImageCore alloc] initWithSurface:surface forContext:self.context];
 }
@@ -346,6 +362,7 @@
 {
     glFlush();
 }
+
 
 - (void)drawFrameTexture:(GLuint)texID textureTarget:(GLenum)target imageRegion:(NSRect)region textureDimensions:(NSSize)size flipped:(BOOL)isFlipped
 {

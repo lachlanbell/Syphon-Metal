@@ -29,17 +29,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "SyphonImage.h"
+#import "SyphonOpenGLImage.h"
 
-@interface SyphonServerRenderer : NSObject {
-@private
-    CGLContextObj _context;
-    GLuint  _MSAASampleCount;
-    GLenum  _depthBufferFormat;
-    GLenum  _stencilBufferFormat;
-    GLsizei _width;
-    GLsizei _height;
-}
+@interface SyphonServerRenderer : NSObject
 - (instancetype)initWithContext:(CGLContextObj)context MSAASampleCount:(GLuint)msc depthBufferResolution:(GLuint)dbr stencilBufferResolution:(GLuint)sbr;
 @property (readonly) CGLContextObj context;
 @property (readonly) GLuint MSAASampleCount;
@@ -51,7 +43,7 @@
 - (void)endInContext; // Called once after any number of the following have been called
 - (BOOL)capabilitiesDidChange; // Called when the context's capabilities have changed, returns YES if the renderer changes its configuration
 - (void)destroySizedResources;
-- (SyphonImage *)newImageForSurface:(IOSurfaceRef)surface;
+- (SyphonOpenGLImage *)newImageForSurface:(IOSurfaceRef)surface;
 - (void)setupForBackingTexture:(GLuint)backing width:(GLsizei)width height:(GLsizei)height;
 - (void)bind;
 - (void)unbind;

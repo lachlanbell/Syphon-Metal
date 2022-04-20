@@ -34,6 +34,20 @@
 #import <OpenGL/CGLMacro.h>
 
 @implementation SyphonServerRendererLegacy
+{
+@private
+    CGLContextObj cgl_ctx;
+    BOOL    _combinedDepthStencil;
+    GLuint  _depthBuffer;
+    GLuint  _stencilBuffer;
+    GLuint  _surfaceFBO;
+    GLuint  _msaaFBO;
+    GLuint  _msaaColorBuffer;
+    GLint   _previousReadFBO;
+    GLint   _previousDrawFBO;
+    GLint   _previousFBO;
+    GLuint  _actualMSAASampleCount;
+}
 
 - (id)initWithContext:(CGLContextObj)context MSAASampleCount:(GLuint)msc depthBufferResolution:(GLuint)dbr stencilBufferResolution:(GLuint)sbr
 {
@@ -130,7 +144,7 @@
     [super destroySizedResources];
 }
 
-- (SyphonImage *)newImageForSurface:(IOSurfaceRef)surface
+- (SyphonOpenGLImage *)newImageForSurface:(IOSurfaceRef)surface
 {
     return [[SyphonIOSurfaceImageLegacy alloc] initWithSurface:surface forContext:cgl_ctx];
 }

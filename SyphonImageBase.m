@@ -1,5 +1,5 @@
 /*
-    SyphonIOSurfaceImage.m
+    SyphonImageBase.m
     Syphon
 
     Copyright 2010-2011 bangnoise (Tom Butterworth) & vade (Anton Marini).
@@ -27,24 +27,31 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import "SyphonIOSurfaceImage.h"
+#import "SyphonImageBase.h"
 #import <IOSurface/IOSurface.h>
 
-@implementation SyphonIOSurfaceImage
-- (id)initWithSurface:(IOSurfaceRef)surfaceRef forContext:(CGLContextObj)context
+@implementation SyphonImageBase
+{
+@private
+    IOSurfaceRef _surface;
+}
+
+- (id)init
+{
+    return [self initWithSurface:NULL];
+}
+
+- (id)initWithSurface:(IOSurfaceRef)surfaceRef
 {
     self = [super init];
 	if (self)
 	{
-		if (context == nil || surfaceRef == nil)
+		if (surfaceRef == nil)
 		{
 			[self release];
 			return nil;
 		}
 		_surface = (IOSurfaceRef)CFRetain(surfaceRef);
-		cgl_ctx = CGLRetainContext(context);
-		_size.width = IOSurfaceGetWidth(surfaceRef);
-		_size.height = IOSurfaceGetHeight(surfaceRef);
 	}
 	return self;
 }
@@ -52,13 +59,11 @@
 - (void)dealloc
 {
     if (_surface) CFRelease(_surface);
-    if (cgl_ctx) CGLReleaseContext(cgl_ctx);
 	[super dealloc];
 }
 
-- (NSSize)textureSize
+- (IOSurfaceRef)surface
 {
-	return _size;
+    return _surface;
 }
-
 @end
